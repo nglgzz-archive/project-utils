@@ -1,0 +1,21 @@
+# Aliases for commands
+alias pls='projects ls'
+alias pla='projects la'
+alias pcat='projects cat'
+alias pfind='projects find'
+
+alias pinit='projects init'
+alias ptemplates='projects templates'
+
+alias psave='projects save'
+alias pupdate='projects update'
+
+alias phelp='projects help'
+
+pcd() {
+  if [ -z "$1" ]; then
+    source <(echo 'cd $PROJECTS/..')
+  else
+    source <(projects find $1 | sed 's/^/cd /')
+  fi
+}

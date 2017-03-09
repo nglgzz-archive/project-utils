@@ -1,0 +1,43 @@
+_premote() {
+  COMPREPLY=("remote")
+  return 0
+}
+complete -F _premote pupdate
+complete -F _premote psave
+
+_ptemplates() {
+  local cur opts
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  opts=$(ptemplates)
+
+  COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+  return 0
+}
+complete -F _ptemplates pinit
+
+_pfile() {
+  local cur prev path
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+  path=$(pfind ${prev})
+
+  if [ ${#COMP_WORDS[@]}=3 ]; then
+    COMPREPLY=( $(compgen -o plusdirs -f -- $path/$cur | sed "s:${path}/::g") )
+
+    for (( i=0; i<${#COMPREPLY[@]}; i++ )); do
+      if [ -d "$path/${COMPREPLY[$i]}" ]; then
+        COMPREPLY[$i]=${COMPREPLY[$i]}/
+      else
+        COMPREPLY[$i]=${COMPREPLY[$i]}
+      fi
+    done
+
+    compopt -o nospace
+    return 0
+  fi
+}
+complete -o filenames -F _pfile pls
+complete -o filenames -F _pfile pla
+complete -o filenames -F _pfile pcat

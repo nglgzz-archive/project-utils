@@ -1,0 +1,156 @@
+#!/usr/bin/env python
+from subprocess import call
+from os.path import dirname, realpath
+import time, sys, os
+
+# projects' directory
+projects_root = dirname(dirname(realpath(__file__)))
+
+# Check if the list contains an element similar to the query string.
+# If it does return the first similar element, otherwise return None.
+def contains(l, el):
+  for x in l:
+    if el.replace('-', '') in x.replace('-', ''):
+      return x
+  return None
+
+# Search for a directory named similarly to dirname.
+# If it exists, return the abspath, otherwhise return None.
+def find_dir(dirname):
+  with open('{}/projects-ignore'.format(os.path.dirname(realpath(__file__))), 'r') as f:
+    ignored = f.readlines()
+    ignored = [l.replace('\n', '') for l in ignored if l != '\n']
+
+    # root contains (root, [dirs]. [files])
+    for root, dirs, files in os.walk(projects_root):
+      dirs[:] = [d for d in dirs if d not in ignored]
+
+      name = contains(dirs, dirname)
+      if name:
+        return '%s/%s' % (root, name)
+  return None
+
+# Search for a project and print its abspath.
+def find(project):
+  path = find_dir(project)
+
+  if path:
+    print path
+  else:
+    print 'project %s not found' % project
+
+# Run ls into the specified project folder.
+def ls(project='nglgzz', dir=''):
+  path = find_dir(project)
+
+  if path:
+    call(['ls', '%s/%s' % (path, dir)])
+  else:
+    print 'project %s not found' % project
+
+# Run ls -a into the specified project folder.
+def la(project='nglgzz', dir=''):
+  path = find_dir(project)
+
+  if path:
+    call(['ls', '-a', '%s/%s' % (path, dir)])
+  else:
+    print 'project %s not found' % project
+
+# Run ls into the specified project folder.
+def cat(project, file):
+  path = find_dir(project)
+
+  if path:
+    call(['cat', '%s/%s' % (path, file)])
+  else:
+    print 'project %s not found' % project
+
+# Creates a project from the specified template.
+# If a name is specified, that'll be the project name,
+# otherwise the template name will be used.
+def init(template, out='.'):
+  t = '%s/.templates/%s' % (projects_root, template)
+
+  if os.path.isdir(t) or os.path.isfile(t):
+    call(['cp', '-r', t, out])
+  else:
+    print 'template %s not found' % template
+
+# Adds all changes to commit, commits with date and time as message,
+# and pushes to origin.
+def save(remote='local'):
+  remote = ('origin-r', 'origin')[remote == 'local']
+  stamp = time.strftime('%Y-%m-%d %H:%M')
+  os.chdir(projects_root)
+
+  call(['git', 'add', '.'])
+  call(['git', 'commit', '-m', stamp])
+  call(['git', 'push', remote])
+
+# Pulls from origin.
+def update(remote='local'):
+  remote = ('origin-r', 'origin')[remote == 'local']
+  os.chdir(projects_root)
+  call(['git', 'pull', remote, 'master'])
+
+# Prints the list of available templates.
+def templates():
+  ls('.templates')
+
+# Prints a list of commands.
+def help():
+  print """
+    Command usage: projects [action] [option]
+      Actions
+        help - shows available commands
+
+        save - git add, commit and push
+        update - git pull
+
+        templates - shows available templates
+        init - create new project from template
+
+        find - find and print project path
+        ls   - print project dir content
+        la   - print all project dir content
+
+        cat   - print content of file inside a project
+
+      Options
+        local|remote  - save, update
+        template out  - init
+        project       - find
+        project dir   - ls, la
+        project file  - cat
+  """
+
+
+if __name__ == '__main__':
+  #try:
+  args = sys.argv
+  opts = {
+    'save': save,
+    'update': update,
+    'find': find,
+    'ls': ls,
+    'la': la,
+    'init': init,
+    'cat': cat,
+    'templates': templates,
+    'help': help,
+  }
+
+  if len(args) == 1:
+    help()
+
+  if len(args) == 2:
+    opts[args[1]]()
+
+  if len(args) == 3:
+    opts[args[1]](args[2])
+
+  if len(args) == 4:
+    opts[args[1]](args[2], args[3])
+  #except Exception as e:
+    #help()
