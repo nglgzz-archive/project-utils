@@ -19,3 +19,18 @@ pcd() {
     source <(projects find $1 | sed 's/^/cd /')
   fi
 }
+
+pstart() {
+  pcd $1
+  npm start
+}
+
+ptest() {
+ pcd $1
+ npm test
+}
+
+psubl() {
+  pcd $1
+  subl3 .
+}
