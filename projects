@@ -35,9 +35,9 @@ def find(project):
   path = find_dir(project)
 
   if path:
-    print path
+    print(path)
   else:
-    print 'project %s not found' % project
+    print('project %s not found' % project)
 
 # Run ls into the specified project folder.
 def ls(project='nglgzz', dir=''):
@@ -46,7 +46,7 @@ def ls(project='nglgzz', dir=''):
   if path:
     call(['ls', '%s/%s' % (path, dir)])
   else:
-    print 'project %s not found' % project
+    print('project %s not found' % project)
 
 # Run ls -a into the specified project folder.
 def la(project='nglgzz', dir=''):
@@ -55,7 +55,7 @@ def la(project='nglgzz', dir=''):
   if path:
     call(['ls', '-a', '%s/%s' % (path, dir)])
   else:
-    print 'project %s not found' % project
+    print('project %s not found' % project)
 
 # Run ls into the specified project folder.
 def cat(project, file):
@@ -64,7 +64,7 @@ def cat(project, file):
   if path:
     call(['cat', '%s/%s' % (path, file)])
   else:
-    print 'project %s not found' % project
+    print('project %s not found' % project)
 
 # Creates a project from the specified template.
 # If a name is specified, that'll be the project name,
@@ -75,7 +75,7 @@ def init(template, out='.'):
   if os.path.isdir(t) or os.path.isfile(t):
     call(['cp', '-r', t, out])
   else:
-    print 'template %s not found' % template
+    print('template %s not found' % template)
 
 # Adds all changes to commit, commits with date and time as message,
 # and pushes to origin.
@@ -100,7 +100,7 @@ def templates():
 
 # Prints a list of commands.
 def help():
-  print """
+  print("""
     Command usage: projects [action] [option]
       Actions
         help - shows available commands
@@ -123,7 +123,7 @@ def help():
         project       - find
         project dir   - ls, la
         project file  - cat
-  """
+  """)
 
 
 if __name__ == '__main__':

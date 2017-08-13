@@ -16,7 +16,11 @@ pcd() {
   if [ -z "$1" ]; then
     source <(echo 'cd $PROJECTS/..')
   else
-    source <(projects find $1 | sed 's/^/cd /')
+    if [ -d "$(projects find $1)" ]; then
+      source <(projects find $1 | sed 's/^/cd /')
+    else
+      echo "project not found: $1"
+    fi
   fi
 }
 
