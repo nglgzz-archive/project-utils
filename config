@@ -1,4 +1,3 @@
 # This file is sourced by ~/.bashrc
 source $PROJECTS/map
 export PATH=$PROJECTS:$PATH
-alias poweroff='psave;sudo poweroff'
