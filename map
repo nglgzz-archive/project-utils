@@ -7,9 +7,6 @@ alias pfind='projects find'
 alias pinit='projects init'
 alias ptemplates='projects templates'
 
-alias psave='projects save'
-alias pupdate='projects update'
-
 alias phelp='projects help'
 
 pcd() {
@@ -34,7 +31,3 @@ ptest() {
  npm test
 }
 
-psubl() {
-  pcd $1
-  subl3 .
-}
